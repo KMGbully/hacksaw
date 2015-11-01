@@ -16,6 +16,11 @@
 # 8.  All outputs are parsed and returned to a master text document and html file for easy viewing.
 #	
 #
+# Installation directory:
+# ------
+# $ sudo git clone https://github.com/KMGbully/hacksaw.git /opt/hacksaw/
+#
+#
 # Usage:
 # ------
 # $ sudo ./hacksaw.sh

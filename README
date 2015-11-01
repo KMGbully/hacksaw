@@ -1,0 +1,33 @@
+# hacksaw v1.1
+# Kevin Gilstrap, bully
+# https://www.linkedin.com/in/kevingilstrap
+# October 28, 2015
+#
+# Uses a variety of open-source tools to automate initial testing on Internal and External Penetration Tests:
+# 1.  Identifies open ports and services in a staged format for quicker results
+# 2.  Enumerates services and identifies known exploitable vulnerabilities
+# 3.  Identifies misconfigurations and known vulnerable components in web applications
+# 4.  Takes screen shots of all scanned websites
+# 5.  Conducts password auditing on common services for default, null, or easily guessable 
+#     passwords
+# 6.  Exports all nmap and metasploit outputs to an engagement directory in txt, xml, and html formats
+# 7.  Creates a metasploit workspace, imports results, and exports the workspace 
+#     and creds to the engagement directory.
+# 8.  All outputs are parsed and returned to a master text document and html file for easy viewing.
+#	
+#
+# Usage:
+# ------
+# $ sudo ./hacksaw.sh
+#
+#
+# Dependencies:
+# -------------
+# firefox
+# terminator
+# nmap
+# metasploit
+# nikto (Must be globally declared. ex: sudo nikto -h)
+# yasuo (Must be located in /opt/yasuo directory)
+# rawr (Must be located in /opt/rawr/ directory)
+# responder (Must be located in /opt/responder directory)

@@ -31,6 +31,8 @@
 # nmap
 # metasploit
 # xsltproc
+# arp-scan
+# nbtscan
 # nikto (Must be globally declared. ex: sudo nikto -h)
 # yasuo (Must be located in /opt/yasuo directory)
 # rawr (Must be located in /opt/rawr/ directory)

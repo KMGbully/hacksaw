@@ -1,7 +1,7 @@
-# hacksaw v1.1
+# hacksaw v1.2
 # Kevin Gilstrap, bully
 # https://www.linkedin.com/in/kevingilstrap
-# October 28, 2015
+# November 5, 2015
 #
 # Uses a variety of open-source tools to automate initial testing on Internal and External Penetration Tests:
 # 1.  Identifies open ports and services in a staged format for quicker results

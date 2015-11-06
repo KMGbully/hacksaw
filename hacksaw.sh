@@ -27,7 +27,6 @@
 # Dependencies:
 # -------------
 # firefox
-# terminator
 # nmap
 # metasploit
 # xsltproc
@@ -141,7 +140,7 @@ echo ""
 echo "$(tput setaf 7)hacksaw/$engagementname/IPT>  $(tput setaf 2)Conducting ARP Scan..."
 echo ""
 echo "$(tput setaf 3)"
-nohup terminator -H -e "bash -c \"arp-scan $networkrange >> IPT-$engagementname-arpscan-$date.out; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
+arp-scan $networkrange >> IPT-$engagementname-arpscan-$date.out
 clear
 echo ""
 echo "$(tput setaf 7)          _____________________________________"
@@ -156,7 +155,7 @@ echo ""
 echo "$(tput setaf 7)hacksaw/$engagementname/IPT>  $(tput setaf 2)Conducting NBT Scan..."
 echo ""
 echo "$(tput setaf 3)"
-nohup terminator -H -e "bash -c \"nbtscan $networkrange >> IPT-$engagementname-nbtscan-$date.out; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
+nbtscan $networkrange >> IPT-$engagementname-nbtscan-$date.out
 clear
 echo ""
 echo "$(tput setaf 7)          _____________________________________"
@@ -171,7 +170,7 @@ echo ""
 echo "$(tput setaf 7)hacksaw/$engagementname/IPT>  $(tput setaf 2)Printing DNS servers from DHCP..."
 echo ""
 echo "$(tput setaf 3)"
-nohup terminator -H -e "bash -c \"cat /etc/resolv.conf >> IPT-$engagementname-resolv_conf-$date.out; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
+cat /etc/resolv.conf >> IPT-$engagementname-resolv_conf-$date.out
 clear
 echo ""
 echo "$(tput setaf 7)          _____________________________________"
@@ -186,7 +185,7 @@ echo ""
 echo "$(tput setaf 7)hacksaw/$engagementname/IPT>  $(tput setaf 2)Performing broadcast discovery..."
 echo ""
 echo "$(tput setaf 3)"
-nohup terminator -H -e "bash -c \"nmap --script broadcast-listener --script broadcast-dhcp-discover --script broadcast-dns-service-discovery --script broadcast-netbios-master-browser --script broadcast-wpad-discover --script broadcast-ping -oX IPT-$engagementname-nmap-broadcast.xml -oN IPT-$engagementname-nmap-broadcast.txt; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
+nmap --script broadcast-listener --script broadcast-dhcp-discover --script broadcast-dns-service-discovery --script broadcast-netbios-master-browser --script broadcast-wpad-discover --script broadcast-ping -oX IPT-$engagementname-nmap-broadcast.xml -oN IPT-$engagementname-nmap-broadcast.txt
 clear
 echo ""
 echo "$(tput setaf 7)          _____________________________________"
@@ -201,7 +200,7 @@ echo ""
 echo "$(tput setaf 7)hacksaw/$engagementname/IPT>  $(tput setaf 2)Finding Domain Controllers..."
 echo ""
 echo "$(tput setaf 3)"
-nohup terminator -H -e "bash -c \"nslookup -type=srv _ldap._tcp.dc._msdcs.$domain >> IPT-$engagementname-domain-controllers-$date.out; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
+nslookup -type=srv _ldap._tcp.dc._msdcs.$domain >> IPT-$engagementname-domain-controllers-$date.out
 clear
 echo ""
 echo "$(tput setaf 7)          _____________________________________"
@@ -216,7 +215,7 @@ echo ""
 echo "$(tput setaf 7)hacksaw/$engagementname/IPT>  $(tput setaf 2)Creating a host list..."
 echo ""
 echo "$(tput setaf 3)"
-nohup terminator -H -e "bash -c \"nmap -sn -PS -n $networkrange | grep 'Nmap scan' >> IPT-$engagementname-host.temp; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
+nmap -sn -PS -n $networkrange | grep 'Nmap scan' >> IPT-$engagementname-host.temp
 cat  IPT-$engagementname-host.temp | awk '{print $5}' >> IPT-$engagementname-host.list
 rm -f IPT-$engagementname-host.temp
 clear
@@ -233,7 +232,7 @@ echo ""
 echo "$(tput setaf 7)hacksaw/$engagementname/IPT>  $(tput setaf 2)Identifying low hanging fruit...SMB..."
 echo ""
 echo "$(tput setaf 3)"
-nohup terminator -H -e "bash -c \"nmap -v -sT -sU -Pn -n -T5 -p 445,137 --open --script smb-check-vulns --script-args=unsafe=1 --script smb-mbenum --script smb-enum-shares --script smb-enum-domains --script smb-enum-groups  --script smb-brute -iL IPT-$engagementname-host.list -oX IPT-$engagementname-nmap-LowHangingFruit-445-SMB.xml -oN IPT-$engagementname-nmap-LowHangingFruit-445-SMB.txt; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
+nmap -v -sT -sU -Pn -n -T5 -p 445,137 --open --script smb-check-vulns --script-args=unsafe=1 --script smb-mbenum --script smb-enum-shares --script smb-enum-domains --script smb-enum-groups  --script smb-brute -iL IPT-$engagementname-host.list -oX IPT-$engagementname-nmap-LowHangingFruit-445-SMB.xml -oN IPT-$engagementname-nmap-LowHangingFruit-445-SMB.txt
 clear
 echo ""
 echo "$(tput setaf 7)          _____________________________________"
@@ -263,7 +262,7 @@ echo ""
 echo "$(tput setaf 7)hacksaw/$engagementname/IPT>  $(tput setaf 2)Identifying low hanging fruit...DNS..."
 echo ""
 echo "$(tput setaf 3)"
-nohup terminator -H -e "bash -c \"nmap -v -sT -sU -Pn -n -T5 -p 53 --open --script dns-srv-enum --script dns-brute --script dns-random-txid --script dns-update -iL IPT-$engagementname-host.list -oX IPT-$engagementname-nmap-LowHangingFruit-53-dns.xml -oN IPT-$engagementname-nmap-LowHangingFruit-53-DNS.txt; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
+nmap -v -sT -sU -Pn -n -T5 -p 53 --open --script dns-srv-enum --script dns-brute --script dns-random-txid --script dns-update -iL IPT-$engagementname-host.list -oX IPT-$engagementname-nmap-LowHangingFruit-53-dns.xml -oN IPT-$engagementname-nmap-LowHangingFruit-53-DNS.txt
 clear
 echo ""
 echo "$(tput setaf 7)          _____________________________________"
@@ -293,7 +292,7 @@ echo ""
 echo "$(tput setaf 7)hacksaw/$engagementname/IPT>  $(tput setaf 2)Identifying low hanging fruit...FTP..."
 echo ""
 echo "$(tput setaf 3)"
-nohup terminator -H -e "bash -c \"nmap -v -sT -Pn -n -T5 -p 21 --open --script ftp-proftpd-backdoor --script ftp-vsftpd-backdoor --script ftp-vuln-cve2010-4221 --script ftp-libopie --script ftp-anon --script ftp-brute -iL IPT-$engagementname-host.list -oX IPT-$engagementname-nmap-LowHangingFruit-21-FTP.xml -oN IPT-$engagementname-nmap-LowHangingFruit-21-FTP.txt; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
+nmap -v -sT -Pn -n -T5 -p 21 --open --script ftp-proftpd-backdoor --script ftp-vsftpd-backdoor --script ftp-vuln-cve2010-4221 --script ftp-libopie --script ftp-anon --script ftp-brute -iL IPT-$engagementname-host.list -oX IPT-$engagementname-nmap-LowHangingFruit-21-FTP.xml -oN IPT-$engagementname-nmap-LowHangingFruit-21-FTP.txt
 clear
 echo ""
 echo "$(tput setaf 7)          _____________________________________"
@@ -323,7 +322,7 @@ echo ""
 echo "$(tput setaf 7)hacksaw/$engagementname/IPT>  $(tput setaf 2)Identifying low hanging fruit...MySQL..."
 echo ""
 echo "$(tput setaf 3)"
-nohup terminator -H -e "bash -c \"nmap -v -sT -Pn -n -T5 -p 3306 --open --script mysql-empty-password --script mysql-brute --script mysql-databases --script mysql-enum --script mysql-users --script mysql-vuln-cve2012-2122 -iL IPT-$engagementname-host.list -oX IPT-$engagementname-nmap-LowHangingFruit-3306-MySQL.xml -oN IPT-$engagementname-nmap-LowHangingFruit-3306-MySQL.txt; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
+nmap -v -sT -Pn -n -T5 -p 3306 --open --script mysql-empty-password --script mysql-brute --script mysql-databases --script mysql-enum --script mysql-users --script mysql-vuln-cve2012-2122 -iL IPT-$engagementname-host.list -oX IPT-$engagementname-nmap-LowHangingFruit-3306-MySQL.xml -oN IPT-$engagementname-nmap-LowHangingFruit-3306-MySQL.txt
 clear
 echo ""
 echo "$(tput setaf 7)          _____________________________________"
@@ -354,7 +353,7 @@ echo ""
 echo "$(tput setaf 7)hacksaw/$engagementname/IPT>  $(tput setaf 2)Identifying low hanging fruit...MSSQL..."
 echo ""
 echo "$(tput setaf 3)"
-nohup terminator -H -e "bash -c \"nmap -v -sT -Pn -n -T5 -p 1433 --open --script broadcast-ms-sql-discover --script ms-sql-empty-password --script ms-sql-brute ms-sql-xp-cmdshell -iL IPT-$engagementname-host.list -oX IPT-$engagementname-nmap-LowHangingFruit-1433-MSSQL.xml -oN IPT-$engagementname-nmap-LowHangingFruit-1433-MSSQL.txt; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
+nmap -v -sT -Pn -n -T5 -p 1433 --open --script broadcast-ms-sql-discover --script ms-sql-empty-password --script ms-sql-brute ms-sql-xp-cmdshell -iL IPT-$engagementname-host.list -oX IPT-$engagementname-nmap-LowHangingFruit-1433-MSSQL.xml -oN IPT-$engagementname-nmap-LowHangingFruit-1433-MSSQL.txt
 clear
 echo ""
 echo "$(tput setaf 7)          _____________________________________"
@@ -384,7 +383,7 @@ echo ""
 echo "$(tput setaf 7)hacksaw/$engagementname/IPT>  $(tput setaf 2)Identifying low hanging fruit...VNC..."
 echo ""
 echo "$(tput setaf 3)"
-nohup terminator -H -e "bash -c \"nmap -v -sT -Pn -n -T5 -p 5900 --open --script realvnc-auth-bypass --script vnc-brute --script vnc-info -iL IPT-$engagementname-host.list -oX IPT-$engagementname-nmap-LowHangingFruit-5900-VNC.xml -oN IPT-$engagementname-nmap-LowHangingFruit-5900-VNC.txt; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
+nmap -v -sT -Pn -n -T5 -p 5900 --open --script realvnc-auth-bypass --script vnc-brute --script vnc-info -iL IPT-$engagementname-host.list -oX IPT-$engagementname-nmap-LowHangingFruit-5900-VNC.xml -oN IPT-$engagementname-nmap-LowHangingFruit-5900-VNC.txt
 clear
 echo ""
 echo "$(tput setaf 7)          _____________________________________"
@@ -414,7 +413,7 @@ echo ""
 echo "$(tput setaf 7)hacksaw/$engagementname/IPT>  $(tput setaf 2)Identifying low hanging fruit...SMTP..."
 echo ""
 echo "$(tput setaf 3)"
-nohup terminator -H -e "bash -c \"nmap -v -sT -Pn -n -T5 -p 25,2525 --open --script smtp-open-relay --script smtp-enum-users --script smtp-brute -iL IPT-$engagementname-host.list -oX IPT-$engagementname-nmap-LowHangingFruit-25-SMTP.xml -oN IPT-$engagementname-nmap-LowHangingFruit-25-SMTP.txt; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
+nmap -v -sT -Pn -n -T5 -p 25,2525 --open --script smtp-open-relay --script smtp-enum-users --script smtp-brute -iL IPT-$engagementname-host.list -oX IPT-$engagementname-nmap-LowHangingFruit-25-SMTP.xml -oN IPT-$engagementname-nmap-LowHangingFruit-25-SMTP.txt
 clear
 echo ""
 echo "$(tput setaf 7)          _____________________________________"
@@ -444,7 +443,7 @@ echo ""
 echo "$(tput setaf 7)hacksaw/$engagementname/IPT>  $(tput setaf 2)Identifying low hanging fruit...X11..."
 echo ""
 echo "$(tput setaf 3)"
-nohup terminator -H -e "bash -c \"nmap -v -sT -Pn -n -T5 -p 6000 --open --script x11-access -iL IPT-$engagementname-host.list -oX IPT-$engagementname-nmap-LowHangingFruit-6000-X11.xml -oN IPT-$engagementname-nmap-LowHangingFruit-6000-X11.txt; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
+nmap -v -sT -Pn -n -T5 -p 6000 --open --script x11-access -iL IPT-$engagementname-host.list -oX IPT-$engagementname-nmap-LowHangingFruit-6000-X11.xml -oN IPT-$engagementname-nmap-LowHangingFruit-6000-X11.txt
 clear
 echo ""
 echo "$(tput setaf 7)          _____________________________________"
@@ -474,7 +473,7 @@ echo ""
 echo "$(tput setaf 7)hacksaw/$engagementname/IPT>  $(tput setaf 2)Identifying web servers and places to logon..."
 echo ""
 echo "$(tput setaf 3)"
-nohup terminator -H -e "bash -c \"nmap -v -sT -sV -Pn -n -T5 -p 80,8080,8081,443,8443,8843 --open --script http-auth-finder --script-args=http-auth-finder.maxdepth=-1 --script http-brute --script http-form-brute --script http-proxy-brute --script http-wordpress-brute --script http-vuln-cve2009-3960 --script http-vuln-cve2010-0738 --script http-vuln-cve2010-2861 --script http-vuln-cve2011-3192 --script http-vuln-cve2011-3368 --script http-vuln-cve2012-1823 --script http-vuln-cve2013-0156 --script http-iis-webdav-vuln --script http-shellshock -iL IPT-$engagementname-host.list -oX IPT-$engagementname-nmap-WebServers-HTTP-HTTPS.xml -oN IPT-$engagementname-nmap-WebServers-HTTP-HTTPS.txt; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
+nmap -v -sT -sV -Pn -n -T5 -p 80,8080,8081,443,8443,8843 --open --script http-auth-finder --script-args=http-auth-finder.maxdepth=-1 --script http-brute --script http-form-brute --script http-proxy-brute --script http-wordpress-brute --script http-vuln-cve2009-3960 --script http-vuln-cve2010-0738 --script http-vuln-cve2010-2861 --script http-vuln-cve2011-3192 --script http-vuln-cve2011-3368 --script http-vuln-cve2012-1823 --script http-vuln-cve2013-0156 --script http-iis-webdav-vuln --script http-shellshock -iL IPT-$engagementname-host.list -oX IPT-$engagementname-nmap-WebServers-HTTP-HTTPS.xml -oN IPT-$engagementname-nmap-WebServers-HTTP-HTTPS.txt
 clear
 echo ""
 echo "$(tput setaf 7)          _____________________________________"
@@ -505,7 +504,7 @@ echo "$(tput setaf 7)hacksaw/$engagementname/IPT>  $(tput setaf 2)Searching for 
 echo ""
 echo "$(tput setaf 3)"
 cd /opt/yasuo
-nohup terminator -H -e "bash -c \"./yasuo.rb -f /opt/hacksaw/generated/$engagementname/IPT-$engagementname-nmap-WebServers-HTTP-HTTPS.xml >> /opt/hacksaw/generated/$engagementname/IPT-$engagementname-WebServers-VulnerableComponents.txt; exec bash\"exit" >> /opt/hacksaw/logs/hacksaw_$engagementname_$date.log
+./yasuo.rb -f /opt/hacksaw/generated/$engagementname/IPT-$engagementname-nmap-WebServers-HTTP-HTTPS.xml >> /opt/hacksaw/generated/$engagementname/IPT-$engagementname-WebServers-VulnerableComponents.txt
 clear
 echo ""
 echo "$(tput setaf 7)          _____________________________________"
@@ -521,7 +520,7 @@ echo "$(tput setaf 7)hacksaw/$engagementname/IPT>  $(tput setaf 2)Taking screen 
 echo ""
 echo "$(tput setaf 3)"
 cd /opt/rawr/
-nohup terminator -H -e "bash -c \"./rawr.py -d /opt/hacksaw/generated/$engagementname/ -f /opt/hacksaw/generated/$engagementname/IPT-$engagementname-nmap-WebServers-HTTP-HTTPS.xml; exec bash\"exit" >> /opt/hacksaw/logs/hacksaw_$engagementname_$date.log
+./rawr.py -d /opt/hacksaw/generated/$engagementname/ -f /opt/hacksaw/generated/$engagementname/IPT-$engagementname-nmap-WebServers-HTTP-HTTPS.xml
 cd /opt/hacksaw/generated/$engagementname/
 clear
 echo ""
@@ -537,8 +536,8 @@ echo ""
 echo "$(tput setaf 7)hacksaw/$engagementname/IPT>  $(tput setaf 2)Looking for misconfigurations in web apps..."
 echo ""
 echo "$(tput setaf 3)"
-nohup terminator -H -e "bash -c \"nikto -h IPT-$engagementname-host.list -Display V -F htm -output IPT-$engagementname-nikto-80-config_issues.html; exec bash\"exit" >> /opt/hacksaw/logs/hacksaw_$engagementname_$date.log
-nohup terminator -H -e "bash -c \"nikto -p 443 -ssl -h IPT-$engagementname-host.list -Display V -F htm -output IPT-$engagementname-nikto-443-config_issues.html; exec bash\"exit" >> /opt/hacksaw/logs/hacksaw_$engagementname_$date.log
+nikto -h IPT-$engagementname-host.list -Display V -F htm -output IPT-$engagementname-nikto-80-config_issues.html
+nikto -p 443 -ssl -h IPT-$engagementname-host.list -Display V -F htm -output IPT-$engagementname-nikto-443-config_issues.html
 clear
 echo ""
 echo "$(tput setaf 7)          _____________________________________"
@@ -554,7 +553,7 @@ echo "$(tput setaf 7)hacksaw/$engagementname/IPT>  $(tput setaf 2)Identifying ad
 echo ""
 echo "$(tput setaf 3)"
 cd /opt/hacksaw/generated/$engagementname/
-nohup terminator -H -e "bash -c \"nmap -v -Pn -sT -n -T5 -p 22,23,587,69,123,135,137-139,512-514,990,1521,3389,5432-5433,12345,27017,49152,U:69,U:161,U:500 --open --script ike-version --script telnet-brute --script oracle-brute --script oracle-enum-users --script pgsql-brute --script rexec-brute --script rlogin-brute --script snmp-brute --script mongodb-brute --script netbus-brute --script netbus-auth-bypass --script msrpc-enum -iL IPT-$engagementname-host.list -oX IPT-$engagementname-nmap-PlacestoLogon.xml -oN IPT-$engagementname-nmap-PlacestoLogon.txt; exec bash\"exit" >> /opt/hacksaw/logs/hacksaw_$engagementname_$date.log
+nmap -v -Pn -sT -n -T5 -p 22,23,587,69,123,135,137-139,512-514,990,1521,3389,5432-5433,12345,27017,49152,U:69,U:161,U:500 --open --script ike-version --script telnet-brute --script oracle-brute --script oracle-enum-users --script pgsql-brute --script rexec-brute --script rlogin-brute --script snmp-brute --script mongodb-brute --script netbus-brute --script netbus-auth-bypass --script msrpc-enum -iL IPT-$engagementname-host.list -oX IPT-$engagementname-nmap-PlacestoLogon.xml -oN IPT-$engagementname-nmap-PlacestoLogon.txt
 clear
 echo ""
 echo "$(tput setaf 7)          _____________________________________"
@@ -855,17 +854,17 @@ msfconsole -o IPT-$engagementname-hosts.txt -x "workspace $engagementname;hosts 
 msfconsole -o IPT-$engagementname-loot.txt -x "workspace $engagementname;loot;exit"
 msfconsole -o IPT-$engagementname-creds.txt -x "workspace $engagementname;creds;exit"
 msfconsole -x "workspace $engagementname;db_export -f xml /opt/hacksaw/generated/$engagementname/IPT-$engagementname-msfconsole-DB_EXPORT.xml;exit"
-nohup terminator -H -e "bash -c \"xsltproc IPT-$engagementname-nmap-broadcast.xml -o IPT-$engagementname-nmap-broadcast.html; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
-nohup terminator -H -e "bash -c \"xsltproc IPT-$engagementname-nmap-LowHangingFruit-445-SMB.xml -o IPT-$engagementname-nmap-LowHangingFruit-445-SMB.html; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
-nohup terminator -H -e "bash -c \"xsltproc IPT-$engagementname-nmap-LowHangingFruit-53-dns.xml -o IPT-$engagementname-nmap-LowHangingFruit-53-dns.html; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
-nohup terminator -H -e "bash -c \"xsltproc IPT-$engagementname-nmap-LowHangingFruit-21-FTP.xml -o IPT-$engagementname-nmap-LowHangingFruit-21-FTP.html; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
-nohup terminator -H -e "bash -c \"xsltproc IPT-$engagementname-nmap-LowHangingFruit-3306-MySQL.xml -o IPT-$engagementname-nmap-LowHangingFruit-3306-MySQL.html; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
-nohup terminator -H -e "bash -c \"xsltproc IPT-$engagementname-nmap-LowHangingFruit-1433-MSSQL.xml -o IPT-$engagementname-nmap-LowHangingFruit-1433-MSSQL.html; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
-nohup terminator -H -e "bash -c \"xsltproc IPT-$engagementname-nmap-LowHangingFruit-5900-VNC.xml -o IPT-$engagementname-nmap-LowHangingFruit-5900-VNC.html; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
-nohup terminator -H -e "bash -c \"xsltproc IPT-$engagementname-nmap-LowHangingFruit-25-SMTP.xml -o IPT-$engagementname-nmap-LowHangingFruit-25-SMTP.html; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
-nohup terminator -H -e "bash -c \"xsltproc IPT-$engagementname-nmap-LowHangingFruit-6000-X11.xml -o IPT-$engagementname-nmap-LowHangingFruit-6000-X11.html; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
-nohup terminator -H -e "bash -c \"xsltproc IPT-$engagementname-nmap-WebServers-HTTP-HTTPS.xml -o IPT-$engagementname-nmap-WebServers-HTTP-HTTPS.html; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
-nohup terminator -H -e "bash -c \"xsltproc IPT-$engagementname-nmap-PlacestoLogon.xml -o IPT-$engagementname-nmap-PlacestoLogon.html; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
+xsltproc IPT-$engagementname-nmap-broadcast.xml -o IPT-$engagementname-nmap-broadcast.html
+xsltproc IPT-$engagementname-nmap-LowHangingFruit-445-SMB.xml -o IPT-$engagementname-nmap-LowHangingFruit-445-SMB.html
+xsltproc IPT-$engagementname-nmap-LowHangingFruit-53-dns.xml -o IPT-$engagementname-nmap-LowHangingFruit-53-dns.html
+xsltproc IPT-$engagementname-nmap-LowHangingFruit-21-FTP.xml -o IPT-$engagementname-nmap-LowHangingFruit-21-FTP.html
+xsltproc IPT-$engagementname-nmap-LowHangingFruit-3306-MySQL.xml -o IPT-$engagementname-nmap-LowHangingFruit-3306-MySQL.html
+xsltproc IPT-$engagementname-nmap-LowHangingFruit-1433-MSSQL.xml -o IPT-$engagementname-nmap-LowHangingFruit-1433-MSSQL.html
+xsltproc IPT-$engagementname-nmap-LowHangingFruit-5900-VNC.xml -o IPT-$engagementname-nmap-LowHangingFruit-5900-VNC.html
+xsltproc IPT-$engagementname-nmap-LowHangingFruit-25-SMTP.xml -o IPT-$engagementname-nmap-LowHangingFruit-25-SMTP.html
+xsltproc IPT-$engagementname-nmap-LowHangingFruit-6000-X11.xml -o IPT-$engagementname-nmap-LowHangingFruit-6000-X11.html
+xsltproc IPT-$engagementname-nmap-WebServers-HTTP-HTTPS.xml -o IPT-$engagementname-nmap-WebServers-HTTP-HTTPS.html
+xsltproc IPT-$engagementname-nmap-PlacestoLogon.xml -o IPT-$engagementname-nmap-PlacestoLogon.html
 clear
 echo "" >> /opt/hacksaw/generated/$engagementname/hacksaw-$engagementname-summary.txt
 echo "          _____________________________________" >> /opt/hacksaw/generated/$engagementname/hacksaw-$engagementname-summary.txt
@@ -1011,7 +1010,7 @@ echo ""
 echo "$(tput setaf 7)hacksaw/$engagementname/EPT>  $(tput setaf 2)Identifying low hanging fruit...SMB..."
 echo ""
 echo "$(tput setaf 3)"
-nohup terminator -H -e "bash -c \"nmap -v -sT -sU -Pn -T5 -p 445,137 --open --script smb-check-vulns --script-args=unsafe=1 --script smb-mbenum --script smb-enum-shares --script smb-enum-domains --script smb-enum-groups  --script smb-brute -iL $networkrange -oX EPT-$engagementname-nmap-LowHangingFruit-445-SMB.xml -oN EPT-$engagementname-nmap-LowHangingFruit-445-SMB.txt; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
+nmap -v -sT -sU -Pn -T5 -p 445,137 --open --script smb-check-vulns --script-args=unsafe=1 --script smb-mbenum --script smb-enum-shares --script smb-enum-domains --script smb-enum-groups  --script smb-brute -iL $networkrange -oX EPT-$engagementname-nmap-LowHangingFruit-445-SMB.xml -oN EPT-$engagementname-nmap-LowHangingFruit-445-SMB.txt
 clear
 echo ""
 echo "$(tput setaf 7)          _____________________________________"
@@ -1041,7 +1040,7 @@ echo ""
 echo "$(tput setaf 7)hacksaw/$engagementname/EPT>  $(tput setaf 2)Identifying low hanging fruit...DNS..."
 echo ""
 echo "$(tput setaf 3)"
-nohup terminator -H -e "bash -c \"nmap -v -sT -sU -Pn -T5 -p 53 --open --script dns-update --script dns-srv-enum --script dns-brute --script dns-random-txid -iL $networkrange -oX EPT-$engagementname-nmap-LowHangingFruit-53-dns.xml -oN EPT-$engagementname-nmap-LowHangingFruit-53-DNS.txt; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
+nmap -v -sT -sU -Pn -T5 -p 53 --open --script dns-update --script dns-srv-enum --script dns-brute --script dns-random-txid -iL $networkrange -oX EPT-$engagementname-nmap-LowHangingFruit-53-dns.xml -oN EPT-$engagementname-nmap-LowHangingFruit-53-DNS.txt
 clear
 echo ""
 echo "$(tput setaf 7)          _____________________________________"
@@ -1071,7 +1070,7 @@ echo ""
 echo "$(tput setaf 7)hacksaw/$engagementname/EPT>  $(tput setaf 2)Identifying low hanging fruit...FTP..."
 echo ""
 echo "$(tput setaf 3)"
-nohup terminator -H -e "bash -c \"nmap -v -sT -Pn -n -T5 -p 21 --open --script ftp-proftpd-backdoor --script ftp-vsftpd-backdoor --script ftp-vuln-cve2010-4221 --script ftp-libopie --script ftp-anon --script ftp-brute -iL EPT-$engagementname-host.list -oX EPT-$engagementname-nmap-LowHangingFruit-21-FTP.xml -oN EPT-$engagementname-nmap-LowHangingFruit-21-FTP.txt; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
+nmap -v -sT -Pn -n -T5 -p 21 --open --script ftp-proftpd-backdoor --script ftp-vsftpd-backdoor --script ftp-vuln-cve2010-4221 --script ftp-libopie --script ftp-anon --script ftp-brute -iL EPT-$engagementname-host.list -oX EPT-$engagementname-nmap-LowHangingFruit-21-FTP.xml -oN EPT-$engagementname-nmap-LowHangingFruit-21-FTP.txt
 clear
 echo ""
 echo "$(tput setaf 7)          _____________________________________"
@@ -1101,7 +1100,7 @@ echo ""
 echo "$(tput setaf 7)hacksaw/$engagementname/EPT>  $(tput setaf 2)Identifying low hanging fruit...MySQL..."
 echo ""
 echo "$(tput setaf 3)"
-nohup terminator -H -e "bash -c \"nmap -v -sT -Pn -T5 -p 3306 --open --script mysql-empty-password --script mysql-brute --script mysql-databases --script mysql-enum --script mysql-users --script mysql-vuln-cve2012-2122 -iL $networkrange -oX EPT-$engagementname-nmap-LowHangingFruit-3306-MySQL.xml -oN EPT-$engagementname-nmap-LowHangingFruit-3306-MySQL.txt; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
+nmap -v -sT -Pn -T5 -p 3306 --open --script mysql-empty-password --script mysql-brute --script mysql-databases --script mysql-enum --script mysql-users --script mysql-vuln-cve2012-2122 -iL $networkrange -oX EPT-$engagementname-nmap-LowHangingFruit-3306-MySQL.xml -oN EPT-$engagementname-nmap-LowHangingFruit-3306-MySQL.txt
 clear
 echo ""
 echo "$(tput setaf 7)          _____________________________________"
@@ -1132,7 +1131,7 @@ echo ""
 echo "$(tput setaf 7)hacksaw/$engagementname/EPT>  $(tput setaf 2)Identifying low hanging fruit...MSSQL..."
 echo ""
 echo "$(tput setaf 3)"
-nohup terminator -H -e "bash -c \"nmap -v -sT -Pn -T5 -p 1433 --open --script broadcast-ms-sql-discover --script ms-sql-empty-password --script ms-sql-brute ms-sql-xp-cmdshell -iL $networkrange -oX EPT-$engagementname-nmap-LowHangingFruit-1433-MSSQL.xml -oN EPT-$engagementname-nmap-LowHangingFruit-1433-MSSQL.txt; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
+nmap -v -sT -Pn -T5 -p 1433 --open --script broadcast-ms-sql-discover --script ms-sql-empty-password --script ms-sql-brute ms-sql-xp-cmdshell -iL $networkrange -oX EPT-$engagementname-nmap-LowHangingFruit-1433-MSSQL.xml -oN EPT-$engagementname-nmap-LowHangingFruit-1433-MSSQL.txt
 clear
 echo ""
 echo "$(tput setaf 7)          _____________________________________"
@@ -1162,7 +1161,7 @@ echo ""
 echo "$(tput setaf 7)hacksaw/$engagementname/EPT>  $(tput setaf 2)Identifying low hanging fruit...VNC..."
 echo ""
 echo "$(tput setaf 3)"
-nohup terminator -H -e "bash -c \"nmap -v -sT -Pn -T5 -p 5900 --open --script realvnc-auth-bypass --script vnc-info --script vnc-brute -iL $networkrange -oX EPT-$engagementname-nmap-LowHangingFruit-5900-VNC.xml -oN EPT-$engagementname-nmap-LowHangingFruit-5900-VNC.txt; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
+nmap -v -sT -Pn -T5 -p 5900 --open --script realvnc-auth-bypass --script vnc-info --script vnc-brute -iL $networkrange -oX EPT-$engagementname-nmap-LowHangingFruit-5900-VNC.xml -oN EPT-$engagementname-nmap-LowHangingFruit-5900-VNC.txt
 clear
 echo ""
 echo "$(tput setaf 7)          _____________________________________"
@@ -1192,7 +1191,7 @@ echo ""
 echo "$(tput setaf 7)hacksaw/$engagementname/EPT>  $(tput setaf 2)Identifying low hanging fruit...SMTP..."
 echo ""
 echo "$(tput setaf 3)"
-nohup terminator -H -e "bash -c \"nmap -v -sT -Pn -T5 -p 25,2525 --open --script smtp-open-relay --script smtp-enum-users --script smtp-brute -iL $networkrange -oX EPT-$engagementname-nmap-LowHangingFruit-25-SMTP.xml -oN EPT-$engagementname-nmap-LowHangingFruit-25-SMTP.txt; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
+nmap -v -sT -Pn -T5 -p 25,2525 --open --script smtp-open-relay --script smtp-enum-users --script smtp-brute -iL $networkrange -oX EPT-$engagementname-nmap-LowHangingFruit-25-SMTP.xml -oN EPT-$engagementname-nmap-LowHangingFruit-25-SMTP.txt
 clear
 echo ""
 echo "$(tput setaf 7)          _____________________________________"
@@ -1222,7 +1221,7 @@ echo ""
 echo "$(tput setaf 7)hacksaw/$engagementname/EPT>  $(tput setaf 2)Identifying low hanging fruit...X11..."
 echo ""
 echo "$(tput setaf 3)"
-nohup terminator -H -e "bash -c \"nmap -v -sT -Pn -T5 -p 6000 --open --script x11-access -iL $networkrange -oX EPT-$engagementname-nmap-LowHangingFruit-6000-X11.xml -oN EPT-$engagementname-nmap-LowHangingFruit-6000-X11.txt; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
+nmap -v -sT -Pn -T5 -p 6000 --open --script x11-access -iL $networkrange -oX EPT-$engagementname-nmap-LowHangingFruit-6000-X11.xml -oN EPT-$engagementname-nmap-LowHangingFruit-6000-X11.txt
 clear
 echo ""
 echo "$(tput setaf 7)          _____________________________________"
@@ -1252,7 +1251,7 @@ echo ""
 echo "$(tput setaf 7)hacksaw/$engagementname/EPT>  $(tput setaf 2)Identifying web servers and places to logon..."
 echo ""
 echo "$(tput setaf 3)"
-nohup terminator -H -e "bash -c \"nmap -v -sT -sV -Pn -T4 -p 80,8080,8081,443,8443,8843 --open --script http-auth-finder --script-args=http-auth-finder.maxdepth=-1 --script http-brute --script http-form-brute --script http-proxy-brute --script http-wordpress-brute --script http-vuln-cve2009-3960 --script http-vuln-cve2010-0738 --script http-vuln-cve2010-2861 --script http-vuln-cve2011-3192 --script http-vuln-cve2011-3368 --script http-vuln-cve2012-1823 --script http-vuln-cve2013-0156 --script http-iis-webdav-vuln --script http-shellshock -iL $networkrange -oX EPT-$engagementname-nmap-WebServers-HTTP-HTTPS.xml -oN EPT-$engagementname-nmap-WebServers-HTTP-HTTPS.txt; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
+nmap -v -sT -sV -Pn -T4 -p 80,8080,8081,443,8443,8843 --open --script http-auth-finder --script-args=http-auth-finder.maxdepth=-1 --script http-brute --script http-form-brute --script http-proxy-brute --script http-wordpress-brute --script http-vuln-cve2009-3960 --script http-vuln-cve2010-0738 --script http-vuln-cve2010-2861 --script http-vuln-cve2011-3192 --script http-vuln-cve2011-3368 --script http-vuln-cve2012-1823 --script http-vuln-cve2013-0156 --script http-iis-webdav-vuln --script http-shellshock -iL $networkrange -oX EPT-$engagementname-nmap-WebServers-HTTP-HTTPS.xml -oN EPT-$engagementname-nmap-WebServers-HTTP-HTTPS.txt
 clear
 echo ""
 echo "$(tput setaf 7)          _____________________________________"
@@ -1283,7 +1282,7 @@ echo "$(tput setaf 7)hacksaw/$engagementname/EPT>  $(tput setaf 2)Searching for 
 echo ""
 echo "$(tput setaf 3)"
 cd /opt/yasuo
-nohup terminator -H -e "bash -c \"./yasuo.rb -f /opt/hacksaw/generated/$engagementname/EPT-$engagementname-nmap-WebServers-HTTP-HTTPS.xml >> /opt/hacksaw/generated/$engagementname/EPT-$engagementname-WebServers-VulnerableComponents.txt; exec bash\"exit" >> /opt/hacksaw/logs/hacksaw_$engagementname_$date.log
+./yasuo.rb -f /opt/hacksaw/generated/$engagementname/EPT-$engagementname-nmap-WebServers-HTTP-HTTPS.xml >> /opt/hacksaw/generated/$engagementname/EPT-$engagementname-WebServers-VulnerableComponents.txt
 clear
 echo ""
 echo "$(tput setaf 7)          _____________________________________"
@@ -1299,7 +1298,7 @@ echo "$(tput setaf 7)hacksaw/$engagementname/EPT>  $(tput setaf 2)Taking screen 
 echo ""
 echo "$(tput setaf 3)"
 cd /opt/rawr/
-nohup terminator -H -e "bash -c \"./rawr.py -d /opt/hacksaw/generated/$engagementname/ -f /opt/hacksaw/generated/$engagementname/EPT-$engagementname-nmap-WebServers-HTTP-HTTPS.xml; exec bash\"exit" >> /opt/hacksaw/logs/hacksaw_$engagementname_$date.log
+./rawr.py -d /opt/hacksaw/generated/$engagementname/ -f /opt/hacksaw/generated/$engagementname/EPT-$engagementname-nmap-WebServers-HTTP-HTTPS.xml
 cd /opt/hacksaw/generated/$engagementname/
 clear
 echo ""
@@ -1315,8 +1314,8 @@ echo ""
 echo "$(tput setaf 7)hacksaw/$engagementname/EPT>  $(tput setaf 2)Looking for misconfigurations in web apps..."
 echo ""
 echo "$(tput setaf 3)"
-nohup terminator -H -e "bash -c \"nikto -h $networkrange -Display V -F htm -output EPT-$engagementname-nikto-80-config_issues.html; exec bash\"exit" >> /opt/hacksaw/logs/hacksaw_$engagementname_$date.log
-nohup terminator -H -e "bash -c \"nikto -p 443 -ssl -h $networkrange -Display V -F htm -output EPT-$engagementname-nikto-443-config_issues.html; exec bash\"exit" >> /opt/hacksaw/logs/hacksaw_$engagementname_$date.log
+nikto -h $networkrange -Display V -F htm -output EPT-$engagementname-nikto-80-config_issues.html
+nikto -p 443 -ssl -h $networkrange -Display V -F htm -output EPT-$engagementname-nikto-443-config_issues.html
 clear
 echo ""
 echo "$(tput setaf 7)          _____________________________________"
@@ -1332,7 +1331,7 @@ echo "$(tput setaf 7)hacksaw/$engagementname/EPT>  $(tput setaf 2)Identifying ad
 echo ""
 echo "$(tput setaf 3)"
 cd /opt/hacksaw/generated/$engagementname/
-nohup terminator -H -e "bash -c \"nmap -v -sT -Pn -T5 -p 22,23,587,69,123,135,137-139,512-514,990,1521,3389,5432-5433,12345,27017,49152,U:69,U:161,U:500 --open --script ike-version --script telnet-brute --script oracle-brute --script oracle-enum-users --script pgsql-brute --script rexec-brute --script rlogin-brute --script snmp-brute --script mongodb-brute --script netbus-brute --script netbus-auth-bypass --script msrpc-enum -iL $networkrange -oX EPT-$engagementname-nmap-PlacestoLogon.xml -oN EPT-$engagementname-nmap-PlacestoLogon.txt; exec bash\"exit" >> /opt/hacksaw/logs/hacksaw_$engagementname_$date.log
+nmap -v -sT -Pn -T5 -p 22,23,587,69,123,135,137-139,512-514,990,1521,3389,5432-5433,12345,27017,49152,U:69,U:161,U:500 --open --script ike-version --script telnet-brute --script oracle-brute --script oracle-enum-users --script pgsql-brute --script rexec-brute --script rlogin-brute --script snmp-brute --script mongodb-brute --script netbus-brute --script netbus-auth-bypass --script msrpc-enum -iL $networkrange -oX EPT-$engagementname-nmap-PlacestoLogon.xml -oN EPT-$engagementname-nmap-PlacestoLogon.txt
 clear
 echo ""
 echo "$(tput setaf 7)          _____________________________________"
@@ -1602,16 +1601,16 @@ msfconsole -o EPT-$engagementname-hosts.txt -x "workspace $engagementname;hosts 
 msfconsole -o EPT-$engagementname-loot.txt -x "workspace $engagementname;loot;exit"
 msfconsole -o EPT-$engagementname-creds.txt -x "workspace $engagementname;creds;exit"
 msfconsole -x "workspace $engagementname;db_export -f xml /opt/hacksaw/generated/$engagementname/EPT-$engagementname-msfconsole-DB_EXPORT.xml;exit"
-nohup terminator -H -e "bash -c \"xsltproc EPT-$engagementname-nmap-LowHangingFruit-445-SMB.xml -o EPT-$engagementname-nmap-LowHangingFruit-445-SMB.html; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
-nohup terminator -H -e "bash -c \"xsltproc EPT-$engagementname-nmap-LowHangingFruit-53-dns.xml -o EPT-$engagementname-nmap-LowHangingFruit-53-dns.html; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
-nohup terminator -H -e "bash -c \"xsltproc EPT-$engagementname-nmap-LowHangingFruit-21-FTP.xml -o EPT-$engagementname-nmap-LowHangingFruit-21-FTP.html; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
-nohup terminator -H -e "bash -c \"xsltproc EPT-$engagementname-nmap-LowHangingFruit-3306-MySQL.xml -o EPT-$engagementname-nmap-LowHangingFruit-3306-MySQL.html; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
-nohup terminator -H -e "bash -c \"xsltproc EPT-$engagementname-nmap-LowHangingFruit-1433-MSSQL.xml -o EPT-$engagementname-nmap-LowHangingFruit-1433-MSSQL.html; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
-nohup terminator -H -e "bash -c \"xsltproc EPT-$engagementname-nmap-LowHangingFruit-5900-VNC.xml -o EPT-$engagementname-nmap-LowHangingFruit-5900-VNC.html; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
-nohup terminator -H -e "bash -c \"xsltproc EPT-$engagementname-nmap-LowHangingFruit-25-SMTP.xml -o EPT-$engagementname-nmap-LowHangingFruit-25-SMTP.html; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
-nohup terminator -H -e "bash -c \"xsltproc EPT-$engagementname-nmap-LowHangingFruit-6000-X11.xml -o EPT-$engagementname-nmap-LowHangingFruit-6000-X11.html; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
-nohup terminator -H -e "bash -c \"xsltproc EPT-$engagementname-nmap-WebServers-HTTP-HTTPS.xml -o EPT-$engagementname-nmap-WebServers-HTTP-HTTPS.html; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
-nohup terminator -H -e "bash -c \"xsltproc EPT-$engagementname-nmap-PlacestoLogon.xml -o EPT-$engagementname-nmap-PlacestoLogon.html; exec bash\"exit" >> ../../logs/hacksaw_$engagementname_$date.log
+xsltproc EPT-$engagementname-nmap-LowHangingFruit-445-SMB.xml -o EPT-$engagementname-nmap-LowHangingFruit-445-SMB.html
+xsltproc EPT-$engagementname-nmap-LowHangingFruit-53-dns.xml -o EPT-$engagementname-nmap-LowHangingFruit-53-dns.html
+xsltproc EPT-$engagementname-nmap-LowHangingFruit-21-FTP.xml -o EPT-$engagementname-nmap-LowHangingFruit-21-FTP.html
+xsltproc EPT-$engagementname-nmap-LowHangingFruit-3306-MySQL.xml -o EPT-$engagementname-nmap-LowHangingFruit-3306-MySQL.html
+xsltproc EPT-$engagementname-nmap-LowHangingFruit-1433-MSSQL.xml -o EPT-$engagementname-nmap-LowHangingFruit-1433-MSSQL.html
+xsltproc EPT-$engagementname-nmap-LowHangingFruit-5900-VNC.xml -o EPT-$engagementname-nmap-LowHangingFruit-5900-VNC.html
+xsltproc EPT-$engagementname-nmap-LowHangingFruit-25-SMTP.xml -o EPT-$engagementname-nmap-LowHangingFruit-25-SMTP.html
+xsltproc EPT-$engagementname-nmap-LowHangingFruit-6000-X11.xml -o EPT-$engagementname-nmap-LowHangingFruit-6000-X11.html
+xsltproc EPT-$engagementname-nmap-WebServers-HTTP-HTTPS.xml -o EPT-$engagementname-nmap-WebServers-HTTP-HTTPS.html
+xsltproc EPT-$engagementname-nmap-PlacestoLogon.xml -o EPT-$engagementname-nmap-PlacestoLogon.html
 clear
 echo "" >> /opt/hacksaw/generated/$engagementname/hacksaw-$engagementname-summary.txt
 echo "          _____________________________________" >> /opt/hacksaw/generated/$engagementname/hacksaw-$engagementname-summary.txt
